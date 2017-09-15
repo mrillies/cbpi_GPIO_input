@@ -86,6 +86,13 @@ class GPIOinputAdv(SensorActive):
     def execute(self):
         while self.is_running():
             self.api.socketio.sleep(.1)
+            if self.actor:
+                if self.input_type[0] == "L":
+                    val = cbpi.cache.get("actors").get(int(self.actor)).state
+                    if val != self.input_on:
+                        self.input_on = not self.input_on
+                        self.data_received(self.out_val[self.input_on])
+            
             #if GPIO.event_detected(int(self.gpio)):
             if self.trigger_val is not None:
                 # if we're here, an edge was recognized
